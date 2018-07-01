@@ -126,18 +126,24 @@ router.get('/use/', (req, res, next) => {
   console.log(lastname);
   var nam = new RegExp(name);
   var lastnam = new RegExp(lastname);
-  UsersUI.findOne({ 'name' : nam, 'lastname' : lastnam }).exec( (err, usuarios) => {
+  UsersUI.find({ 'name' : nam, 'lastname' : lastnam }).exec( (err, usuarios) => {
     if (err) {
       res.status(500).json(err);
     } else {
-      res.status(200).json({
-        info : usuarios,
-        user : {
-          nombre : name,
-          apellido : lastname,
-          imagendeUsuario : usuarios.imagesUser
-        }
-      });
+      if (!usuarios) {
+        res.status(404).json({
+          message : 'Recurso no encontrado en la base de datos '
+        });
+      } else {
+        res.status(200).json({
+          info : usuarios,
+          user : {
+            nombre : name,
+            apellido : lastname,
+            imagendeUsuario : usuarios.imagesUser
+          }
+        });
+      }
     }
   });
 });
