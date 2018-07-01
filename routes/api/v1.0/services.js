@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require("mongoose");
+var mongoose = require('mongoose')
 var multer = require("multer");
 var fs = require("fs");
 
@@ -34,7 +34,7 @@ var upload = multer({
   fileFilter : fileFilter
 }).single('img')
 
-router.post('/users', upload, (req, res, next) => {
+router.post('/user', upload, (req, res, next) => {
   console.log(req.file);
   var users = {
     _id : new mongoose.Types.ObjectId(),
@@ -67,7 +67,7 @@ router.post('/users', upload, (req, res, next) => {
     });
 });
 
-router.get('/users', (req, res, next) => {
+router.get('/user', (req, res, next) => {
   UsersUI.find()
   .select(" name lastname _id imagesUser")
   .exec()
@@ -95,6 +95,49 @@ router.get('/users', (req, res, next) => {
   });
 });
 
+router.get('/users/', (req, res , next) => {
+  var keyword = req.query.search;
+  console.log(keyword);
+  UsersUI.find( { 'name' : keyword }).exec( (err, usuario) => {
+    if (err){
+      res.status(500).json({
+        error : err
+      });
+    } else {
+      if(usuario == ""){
+        res.status(404).json({
+          message : 'No existe el recurso'
+        });
+      } else {
+        res.status(200).json({
+          usuarios : usuario,
+          message : 'palabra clave ' + keyword + ' buscada.'
+        }); 
+      }
+    }
+  });
+});
+
+router.get('/use/', (req, res, next) => {
+  var name = req.query.name;
+  var lastname = req.query.lastname;
+  console.log(name);
+  console.log(lastname);
+  UsersUI.findOne({ 'name' : name, 'lastname' : lastname }).exec( (err, usuarios) => {
+    if (err) {
+      res.status(500).json(err);
+    } else {
+      res.status(200).json({
+        info : usuarios,
+        user : {
+          nombre : name,
+          apellido : lastname,
+          imagendeUsuario : usuarios.imagesUser
+        }
+      });
+    }
+  });
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
