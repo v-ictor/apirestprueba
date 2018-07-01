@@ -98,7 +98,8 @@ router.get('/user', (req, res, next) => {
 router.get('/users/', (req, res , next) => {
   var keyword = req.query.search;
   console.log(keyword);
-  UsersUI.find( { 'name' : keyword }).exec( (err, usuario) => {
+  var expreg = new RegExp(keyword);
+  UsersUI.find( { 'name' : expreg }).exec( (err, usuario) => {
     if (err){
       res.status(500).json({
         error : err
@@ -123,7 +124,9 @@ router.get('/use/', (req, res, next) => {
   var lastname = req.query.lastname;
   console.log(name);
   console.log(lastname);
-  UsersUI.findOne({ 'name' : name, 'lastname' : lastname }).exec( (err, usuarios) => {
+  var nam = new RegExp(name);
+  var lastnam = new RegExp(lastname);
+  UsersUI.findOne({ 'name' : nam, 'lastname' : lastnam }).exec( (err, usuarios) => {
     if (err) {
       res.status(500).json(err);
     } else {
